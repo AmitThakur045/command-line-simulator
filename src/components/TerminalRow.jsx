@@ -21,19 +21,19 @@ const TerminalRow = ({
 
   function handleCommands() {
     let words = command.split(" ").filter(Boolean);
-    // console.log("words", words);
+    console.log("words", words);
     let main = words[0];
     words.shift();
-    // console.log("words2", words);
+    console.log("words2", words);
     let result = "";
     let rest = words.join(" ");
     rest = rest.trim();
-    // console.log(
-    //   "res",
-    //   rest,
-    //   main,
-    //   childDirectories[currentDirectoryName].includes(rest)
-    // );
+    console.log(
+      "res",
+      rest,
+      main,
+      childDirectories[currentDirectoryName].includes(rest)
+    );
 
     switch (main) {
       case "cd": {
@@ -49,7 +49,17 @@ const TerminalRow = ({
           setCurrentDirectoryPath((prev) => prev + "/" + rest);
           setCurrentDirectoryName(rest);
           break;
-        } else if (rest === "." || rest === ".." || rest === "../") {
+        } else if (rest === "../" || rest === "/") {
+          setCurrentDirectoryPath("~");
+          setCurrentDirectoryName("root");
+          break;
+        } else if (rest === "..") {
+          const arr = currentDirectoryPath.split("/");
+          arr.pop();
+          const newPath = arr.join("/");
+          setCurrentDirectoryPath(newPath);
+          setCurrentDirectoryName(arr.splice(-1));
+        } else if (rest === ".") {
           setCurrentDirectoryPath("~");
           setCurrentDirectoryName("root");
           break;
@@ -78,6 +88,27 @@ const TerminalRow = ({
       case "pwd": {
         let str = currentDirectoryPath;
         result = str.replace("~", "/home/amit");
+        break;
+      }
+      case "mkdir": {
+        if (words[0] !== undefined && words[0] !== "") {
+          result = "";
+          if (rest in childDirectories) {
+            result = "folder with the same name already existed.";
+            break;
+          }
+
+          let newDirectories = childDirectories;
+          newDirectories[rest] = [];
+
+          const arr = currentDirectoryPath.split("/");
+          arr.shift();
+          newDirectories[arr.slice(-1).toString()].push(rest);
+          setChildDirectories(newDirectories);
+          break;
+        } else {
+          result = "mkdir: missing operand";
+        }
         break;
       }
     }
@@ -113,6 +144,7 @@ const TerminalRow = ({
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
   // console.log(previousTerminalRows);
+  console.log(childDirectories);
   return (
     <React.Fragment key={id}>
       {terminalIndex > 0 && (
