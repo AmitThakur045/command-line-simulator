@@ -55,13 +55,14 @@ const TerminalRow = ({
         let target = words[0];
         if (target === "" || target === undefined || target === null)
           target = currentDirectoryName;
+        console.log("target", target in childDirectories);
 
         if (words.length >= 1) {
           result = "too many arguments, arguments must be <1.";
           break;
         }
         if (target in childDirectories) {
-          result = childDirectories(target).join("");
+          result = childDirectories[target].join(", ");
         } else {
           result = `ls: cannot access '${words}': No such file or directory                    `;
         }
@@ -71,16 +72,13 @@ const TerminalRow = ({
     console.log(result);
     document.getElementById(`row-result-${id}`).innerHTML = result;
 
-    // previousTerminalRows[terminalIndex] = [firstRef.current, secondRef.current];
     let newPrevTerminal = previousTerminalRows;
-    newPrevTerminal.push(firstRef.current);
-    newPrevTerminal.push(secondRef.current);
+    newPrevTerminal.push(command);
+    newPrevTerminal.push(result);
     setPreviousTerminalRows(newPrevTerminal);
     setTerminalIndex((prev) => prev + 1);
     setCommand("");
     setId((prev) => prev + 1);
-    // previousTerminalRows[terminalIndex].push(firstRef.current);
-    // previousTerminalRows[terminalIndex].push(secondRef.current);
   }
 
   const check = (e) => {
@@ -97,6 +95,36 @@ const TerminalRow = ({
 
   return (
     <React.Fragment key={id}>
+      {terminalIndex > 0 && (
+        <React.Fragment>
+          {previousTerminalRows.map((data, idx) => (
+            <>
+              {idx % 2 == 0 ? (
+                <div className="flex w-full h-5 space-x-2">
+                  <div className="flex font-semibold items-center">
+                    <span className="text-[#00e200]">Amit@Thakur</span>
+                    <span className="text-white">:</span>
+                    <span className="text-[#3464a3]">
+                      {currentDirectoryPath}
+                    </span>
+                    <span className="text-white">$</span>
+                  </div>
+                  <div className="flex p-0">
+                    <input
+                      type="text"
+                      value={data}
+                      className="bg-black border-0 text-white outline-none caret-white text-left"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className={"my-2 font-normal text-[#3464a3]"}>{data}</div>
+              )}
+            </>
+          ))}
+        </React.Fragment>
+      )}
+
       {/* for writing the command */}
       <div className="flex w-full h-5 space-x-2" ref={firstRef}>
         <div className="flex font-semibold items-center">

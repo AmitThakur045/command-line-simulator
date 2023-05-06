@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import TerminalRow from "./components/TerminalRow";
 import React from "react";
 
 function App() {
   const [id, setId] = useState(0);
-  const [currentDirectoryName, setCurrentDirectoryName] = useState("~");
+  const [currentDirectoryName, setCurrentDirectoryName] = useState("root");
   const [currentDirectoryPath, setCurrentDirectoryPath] = useState("~");
   const [childDirectories, setChildDirectories] = useState({
     root: [
@@ -17,40 +17,38 @@ function App() {
       "PDPU",
       "interests",
     ],
+    PDPU: ["Sem-6"],
+    books: [
+      "Eric-Jorgenson_The-Almanack-of-Naval-Ravikant.pdf",
+      "Elon Musk: How the Billionaire CEO of SpaceX.pdf",
+      "The $100 Startup_CHRIS_GUILLEBEAU.pdf",
+      "The_Magic_of_Thinking_Big.pdf",
+    ],
+    skills: [
+      "Front-end development",
+      "React.js",
+      "jQuery",
+      "Flutter",
+      "Express.js",
+      "SQL",
+      "Firebase",
+    ],
+    projects: [
+      "portfolio",
+      "Parivesh",
+      "Shareme",
+      "code-buddy",
+      "Bessalani-lms",
+    ],
+    interests: ["Software Engineering", "FrontEnd Developement", "Computer Vision"],
     languages: ["Javascript", "C++", "Java", "Dart"],
   });
 
   const [previousTerminalRows, setPreviousTerminalRows] = useState([]);
   const [terminalIndex, setTerminalIndex] = useState(0);
-  // function initialize() {
-  //   for (let i = 0; i < 100; i++) {
-  //     previousTerminalRows[i] = [];
-  //   }
-  // }
-  // initialize();
 
-  const list = [];
-  function display() {
-    for (let i = 0; i < terminalIndex; i + 2) {
-      list.push(
-        <React.Fragment>
-          previousTerminalRows[i] previousTerminalRows[i+1]
-        </React.Fragment>
-      );
-    }
-  }
-
-  // useEffect(() => {
-  //   if (terminalIndex > 0) {
-  //     display();
-  //   }
-  // }, [terminalIndex]);
-
-  console.log(terminalIndex, previousTerminalRows);
-  // console.log(list);
   return (
     <div className="bg-black w-full h-screen">
-      {terminalIndex > 0}
       <TerminalRow
         currentDirectoryName={currentDirectoryName}
         setCurrentDirectoryName={setCurrentDirectoryName}
