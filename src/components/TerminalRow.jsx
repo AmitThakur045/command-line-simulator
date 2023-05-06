@@ -75,6 +75,11 @@ const TerminalRow = ({
         }
         break;
       }
+      case "pwd": {
+        let str = currentDirectoryPath;
+        result = str.replace("~", "/home/amit");
+        break;
+      }
     }
     // console.log(result);
     document.getElementById(`row-result-${id}`).innerHTML = result;
