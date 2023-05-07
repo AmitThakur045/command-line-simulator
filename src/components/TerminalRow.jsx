@@ -124,8 +124,25 @@ const TerminalRow = ({
         break;
       }
       case "clear": {
-        document.getElementById('#terminal-body').empty();
+        document.getElementById("#terminal-body").empty();
         break;
+      }
+      case "about-amit": {
+        result = `Hi there! My name is Amit Kumar Thakur, and I am a Computer Science Engineering student currently pursuing my BTech degree from Maharaja Surajmal Institute Of Technology in New Delhi, India. With a CGPA of 9.595, I have a strong foundation in computer science and am always eager to learn and explore new technologies.
+        
+        I have developed proficiency in several programming languages, including C/C++, HTML/CSS, JavaScript, and TypeScript, and have hands-on experience working with frameworks such as ReactJS, Redux, RecoilJS, Tailwind CSS, NodeJS, ExpressJS, and React Query. I am also familiar with various databases such as Google Firebase, MongoDB, and SQL`;
+        break;
+      }
+      case "help": {
+        result =
+          "Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
+        break;
+      }
+      default: {
+        result =
+          "Command '" +
+          main +
+          "' not found, or not yet implemented.Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
       }
     }
     // console.log(result);
@@ -156,21 +173,21 @@ const TerminalRow = ({
         handleCommands();
       } else return;
     } else if (e.key === "ArrowUp") {
-      if(arrowIndex == 0) {
+      if (arrowIndex == 0) {
         setCommand(previousTerminalRows[arrowIndex]);
         return;
       }
       let idx = arrowIndex;
-      setArrowIndex(prev => prev-1);
-      setCommand(previousTerminalRows[idx-1][0]);
+      setArrowIndex((prev) => prev - 1);
+      setCommand(previousTerminalRows[idx - 1][0]);
     } else if (e.key === "ArrowDown") {
-      if(arrowIndex >= terminalIndex) {
+      if (arrowIndex >= terminalIndex) {
         setCommand("");
         return;
       }
       let idx = arrowIndex;
-      setArrowIndex(prev => prev+1);
-      setCommand(previousTerminalRows[idx+1][0]);
+      setArrowIndex((prev) => prev + 1);
+      setCommand(previousTerminalRows[idx + 1][0]);
     }
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
