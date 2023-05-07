@@ -16,6 +16,7 @@ const TerminalRow = ({
   setTerminalIndex,
 }) => {
   const [command, setCommand] = useState("");
+  // const [extraPreviousCommand, setExtraPreviousCommand] = useState([]);
   const firstRef = useRef(null);
   const secondRef = useRef(null);
 
@@ -111,6 +112,21 @@ const TerminalRow = ({
         }
         break;
       }
+      case "echo": {
+        if (rest.length === 0) {
+          result = "Please enter the sentence in inverted comma's";
+        } else if (rest[0] !== '"' || rest[rest.length - 1] !== '"') {
+          result = "Please enter the sentence in inverted comma's";
+        } else {
+          const str = rest.slice(1, -1);
+          result = str;
+        }
+        break;
+      }
+      case "clear": {
+        document.getElementById('#terminal-body').empty();
+        break;
+      }
     }
     // console.log(result);
     document.getElementById(`row-result-${id}`).innerHTML = result;
@@ -122,9 +138,15 @@ const TerminalRow = ({
     newPrevTerminal.push(currentDirectoryName.toString());
     newPrevTerminal.push(currentDirectoryPath.toString());
 
+    // adding the current command and result to list of all command;
     let res = previousTerminalRows;
     res.push(newPrevTerminal);
     setPreviousTerminalRows(res);
+
+    // maintaining extra previous command to implement the Arrow UP and Arrow Down functionality
+    // let res2 = extraPreviousCommand;
+    // res2.push(newPrevTerminal);
+    // setExtraPreviousCommand(res2);
 
     setTerminalIndex((prev) => prev + 1);
     setCommand("");
@@ -144,13 +166,14 @@ const TerminalRow = ({
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
   // console.log(previousTerminalRows);
-  console.log(childDirectories);
+  // console.log(childDirectories);
+  // console.log("herllo", previousTerminalRows.length);
   return (
     <React.Fragment key={id}>
-      {terminalIndex > 0 && (
+      {previousTerminalRows.length > 0 && (
         <React.Fragment>
           {previousTerminalRows.map((data, idx) => (
-            <React.Fragment key={idx}>
+            <React.Fragment key={idx} id="terminal-body">
               <div className="flex w-full h-5 space-x-2">
                 <div className="flex font-semibold items-center">
                   <span className="text-[#00e200]">Amit@Thakur</span>
@@ -158,12 +181,12 @@ const TerminalRow = ({
                   <span className="text-[#3464a3]">{data[3]}</span>
                   <span className="text-white">$</span>
                 </div>
-                <div className="flex p-0">
+                <div className="flex p-0 w-full">
                   <input
                     type="text"
                     value={data[0]}
                     disabled={true}
-                    className="bg-black border-0 text-white outline-none caret-white text-left"
+                    className="bg-black w-full border-0 text-white outline-none caret-white text-left"
                   />
                 </div>
               </div>
@@ -194,7 +217,7 @@ const TerminalRow = ({
             onKeyDown={(e) => check(e)}
             value={command}
             id={`row-input-${id}`}
-            className="bg-black border-0 text-white outline-none caret-white text-left"
+            className="bg-black w-full border-0 text-white outline-none caret-white text-left"
           />
         </div>
       </div>
