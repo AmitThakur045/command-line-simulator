@@ -16,25 +16,25 @@ const TerminalRow = ({
   setTerminalIndex,
 }) => {
   const [command, setCommand] = useState("");
-  // const [extraPreviousCommand, setExtraPreviousCommand] = useState([]);
+  const [arrowIndex, setArrowIndex] = useState(0);
   const firstRef = useRef(null);
   const secondRef = useRef(null);
 
   function handleCommands() {
     let words = command.split(" ").filter(Boolean);
-    console.log("words", words);
+    // console.log("words", words);
     let main = words[0];
     words.shift();
-    console.log("words2", words);
+    // console.log("words2", words);
     let result = "";
     let rest = words.join(" ");
     rest = rest.trim();
-    console.log(
-      "res",
-      rest,
-      main,
-      childDirectories[currentDirectoryName].includes(rest)
-    );
+    // console.log(
+    //   "res",
+    //   rest,
+    //   main,
+    //   childDirectories[currentDirectoryName].includes(rest)
+    // );
 
     switch (main) {
       case "cd": {
@@ -143,25 +143,34 @@ const TerminalRow = ({
     res.push(newPrevTerminal);
     setPreviousTerminalRows(res);
 
-    // maintaining extra previous command to implement the Arrow UP and Arrow Down functionality
-    // let res2 = extraPreviousCommand;
-    // res2.push(newPrevTerminal);
-    // setExtraPreviousCommand(res2);
-
     setTerminalIndex((prev) => prev + 1);
+    setArrowIndex(terminalIndex + 1);
     setCommand("");
     setId((prev) => prev + 1);
   }
 
   const check = (e) => {
+    console.log(previousTerminalRows.length, arrowIndex);
     if (e.key === "Enter") {
       if (command.length !== 0) {
         handleCommands();
       } else return;
     } else if (e.key === "ArrowUp") {
-      console.log(e.key);
+      if(arrowIndex == 0) {
+        setCommand(previousTerminalRows[arrowIndex]);
+        return;
+      }
+      let idx = arrowIndex;
+      setArrowIndex(prev => prev-1);
+      setCommand(previousTerminalRows[idx-1][0]);
     } else if (e.key === "ArrowDown") {
-      console.log(e.key);
+      if(arrowIndex >= terminalIndex) {
+        setCommand("");
+        return;
+      }
+      let idx = arrowIndex;
+      setArrowIndex(prev => prev+1);
+      setCommand(previousTerminalRows[idx+1][0]);
     }
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
@@ -169,11 +178,11 @@ const TerminalRow = ({
   // console.log(childDirectories);
   // console.log("herllo", previousTerminalRows.length);
   return (
-    <React.Fragment key={id}>
+    <React.Fragment>
       {previousTerminalRows.length > 0 && (
         <React.Fragment>
           {previousTerminalRows.map((data, idx) => (
-            <React.Fragment key={idx} id="terminal-body">
+            <div key={idx} id="terminal-body">
               <div className="flex w-full h-5 space-x-2">
                 <div className="flex font-semibold items-center">
                   <span className="text-[#00e200]">Amit@Thakur</span>
@@ -191,7 +200,7 @@ const TerminalRow = ({
                 </div>
               </div>
               <div className={"my-2 font-normal text-[#3464a3]"}>{data[1]}</div>
-            </React.Fragment>
+            </div>
           ))}
         </React.Fragment>
       )}
