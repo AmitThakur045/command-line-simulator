@@ -28,7 +28,7 @@ const TerminalRow = ({
     let words = command.split(" ").filter(Boolean);
     // console.log("words", words);
     let main = words[0];
-    words.shift();
+    words.shift(); // removing first element
     // console.log("words2", words);
     let result = "";
     let rest = words.join(" ");
@@ -148,6 +148,216 @@ const TerminalRow = ({
         }
         break;
       }
+      case "touch": {
+        if (words[0] !== undefined && words[0] !== "") {
+          result = "";
+
+          let newDirectories = childDirectories;
+          const arr = currentDirectoryPath.split("/");
+          arr.shift();
+
+          // Need to add a check to find if the folder with the same name exist or not
+          words.forEach((value) => {
+            if (arr.length === 0) {
+              newDirectories["root"].push({
+                name: value,
+                isDirectory: false,
+              });
+            } else {
+              newDirectories[arr.slice(-1).toString()].push({
+                name: value,
+                isDirectory: false,
+              });
+            }
+          });
+          setChildDirectories(newDirectories);
+          break;
+        } else {
+          result = "touch: missing operand";
+        }
+        break;
+      }
+      case "mv": {
+        if (words.length > 1) {
+          if (words.length == 2) {
+            // move a file
+            if (words[1].includes("/")) {
+              let arr = words[1].split("/");
+              arr.shift(); // removing " ";
+              arr.shift(); // removing home;
+              arr.shift(); // removing amit;
+
+              arr.unshift("root"); // adding root to the front
+              console.log(arr);
+              // checking if the destination directory is present or not
+              const check = (idx) => {
+                if (idx === arr.length - 1) {
+                  return true;
+                }
+                if (
+                  childDirectories[arr[idx].toString()].findIndex(
+                    (obj) =>
+                      JSON.stringify(obj) ==
+                      JSON.stringify({
+                        name: arr[idx + 1].toString(),
+                        isDirectory: true,
+                      })
+                  ) !== -1
+                ) {
+                  return check(idx + 1);
+                }
+                return false;
+              };
+
+              // if destination directory is present
+              if (check(0) === true) {
+                let newDirectories = childDirectories;
+                // added the new file in the directory
+                newDirectories[arr.splice(-1)].push({
+                  name: words[0],
+                  isDirectory: false,
+                });
+
+                // remove the file from the prev directory
+                let index = newDirectories[currentDirectoryName].findIndex(
+                  (obj) =>
+                    JSON.stringify(obj) ==
+                    JSON.stringify({
+                      name: words[0].toString(),
+                      isDirectory: false,
+                    })
+                );
+
+                newDirectories[currentDirectoryName].splice(index, 1);
+                setChildDirectories(newDirectories);
+              } else {
+                result = `there no such destination directory present as ${words[1]}`;
+              }
+            } else {
+              // rename a directory - check if the directory is present or not
+              if (
+                childDirectories[currentDirectoryName].some((ele) => {
+                  return (
+                    JSON.stringify(ele) ==
+                    JSON.stringify({
+                      name: words[0].toString(),
+                      isDirectory: true,
+                    })
+                  );
+                })
+              ) {
+                let newDirectories = childDirectories;
+
+                let index = newDirectories[currentDirectoryName].findIndex(
+                  (obj) =>
+                    JSON.stringify(obj) ==
+                    JSON.stringify({
+                      name: words[0].toString(),
+                      isDirectory: true,
+                    })
+                );
+
+                newDirectories[currentDirectoryName][index].name = words[1];
+                setChildDirectories(newDirectories);
+              } else if (
+                childDirectories[currentDirectoryName].some((ele) => {
+                  return (
+                    JSON.stringify(ele) ==
+                    JSON.stringify({
+                      name: words[0].toString(),
+                      isDirectory: false, // checking if the file is present or not
+                    })
+                  );
+                })
+              ) {
+                // rename a file
+                let newDirectories = childDirectories;
+                let index = newDirectories[currentDirectoryName].findIndex(
+                  (obj) =>
+                    JSON.stringify(obj) ==
+                    JSON.stringify({
+                      name: words[0].toString(),
+                      isDirectory: false,
+                    })
+                );
+
+                newDirectories[currentDirectoryName][index].name = words[1];
+                setChildDirectories(newDirectories);
+              } else {
+                result = `no directory or file found name ${words[0]}`;
+              }
+            }
+          } else {
+            // moving multiple file to destination
+            console.log(words[words.length - 1].includes("/"));
+            if (words[words.length - 1].includes("/")) {
+              let arr = words[words.length - 1].split("/");
+              arr.shift(); // removing " ";
+              arr.shift(); // removing home;
+              arr.shift(); // removing amit;
+
+              arr.unshift("root"); // adding root to the front
+              // console.log(arr);
+              // checking if the destination directory is present or not
+              const check = (idx) => {
+                if (idx === arr.length - 1) {
+                  return true;
+                }
+                if (
+                  childDirectories[arr[idx].toString()].findIndex(
+                    (obj) =>
+                      JSON.stringify(obj) ==
+                      JSON.stringify({
+                        name: arr[idx + 1].toString(),
+                        isDirectory: true,
+                      })
+                  ) !== -1
+                ) {
+                  return check(idx + 1);
+                }
+                return false;
+              };
+
+              if (check(0)) {
+                let newDirectories = childDirectories;
+                words.pop();
+                console.log("words", words);
+
+                // added the new file in the directory
+                words.forEach((obj) => {
+                  newDirectories[arr.splice(-1)].push({
+                    name: obj,
+                    isDirectory: false,
+                  });
+                  console.log(obj);
+                });
+
+                // remove the file from the prev directory
+                words.forEach((prevFile) => {
+                  let index = newDirectories[currentDirectoryName].findIndex(
+                    (obj) =>
+                      JSON.stringify(obj) ==
+                      JSON.stringify({
+                        name: prevFile.toString(),
+                        isDirectory: false,
+                      })
+                  );
+
+                  newDirectories[currentDirectoryName].splice(index, 1);
+                });
+                setChildDirectories(newDirectories);
+              } else {
+                result = `there no such destination directory present as ${words[1]}`;
+              }
+            } else {
+              result = "there is no such command present or yet implemented";
+            }
+          }
+        } else {
+          result = "mv: missing operand";
+        }
+        break;
+      }
       case "clear": {
         document.getElementById("#terminal-body").empty();
         break;
@@ -217,7 +427,7 @@ const TerminalRow = ({
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
   // console.log(previousTerminalRows);
-  // console.log(childDirectories);
+  console.log(childDirectories);
   // console.log("herllo", previousTerminalRows.length);
   return (
     <React.Fragment>
