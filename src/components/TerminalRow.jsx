@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 const TerminalRow = ({
   id,
@@ -20,6 +20,10 @@ const TerminalRow = ({
   const firstRef = useRef(null);
   const secondRef = useRef(null);
 
+  useEffect(() => {
+    document.getElementById(`row-result-${id}`).scrollIntoView(false);
+  }, [terminalIndex]);
+
   function handleCommands() {
     let words = command.split(" ").filter(Boolean);
     // console.log("words", words);
@@ -29,12 +33,7 @@ const TerminalRow = ({
     let result = "";
     let rest = words.join(" ");
     rest = rest.trim();
-    // console.log(
-    //   "res",
-    //   rest,
-    //   main,
-    //   childDirectories[currentDirectoryName].includes(rest)
-    // );
+    console.log("res", rest, main);
 
     switch (main) {
       case "cd": {
@@ -45,8 +44,14 @@ const TerminalRow = ({
         } else if (words.length > 1) {
           result = "too many arguments, arguments must be <1.";
           break;
-        } else if (childDirectories[currentDirectoryName].includes(rest)) {
-          // console.log(childDirectories[currentDirectoryName].includes(rest));
+        } else if (
+          childDirectories[currentDirectoryName].some((ele) => {
+            return (
+              JSON.stringify(ele) ==
+              JSON.stringify({ name: rest.toString(), isDirectory: true })
+            );
+          })
+        ) {
           setCurrentDirectoryPath((prev) => prev + "/" + rest);
           setCurrentDirectoryName(rest);
           break;
@@ -59,13 +64,17 @@ const TerminalRow = ({
           arr.pop();
           const newPath = arr.join("/");
           setCurrentDirectoryPath(newPath);
-          setCurrentDirectoryName(arr.splice(-1));
+          if (arr.length === 1) {
+            setCurrentDirectoryName("root");
+          } else {
+            setCurrentDirectoryName(arr.splice(-1));
+          }
         } else if (rest === ".") {
           setCurrentDirectoryPath("~");
           setCurrentDirectoryName("root");
           break;
         } else {
-          result = `bash: cd: ${words}: No such file or directory`;
+          result = `bash: cd: ${words}: is not a directory`;
         }
         break;
       }
@@ -73,14 +82,19 @@ const TerminalRow = ({
         let target = words[0];
         if (target === "" || target === undefined || target === null)
           target = currentDirectoryName;
-        // console.log("target", target in childDirectories);
 
         if (words.length >= 1) {
           result = "too many arguments, arguments must be <1.";
           break;
         }
         if (target in childDirectories) {
-          result = childDirectories[target].join(", ");
+          result = childDirectories[target].reduce((accumulator, currValue) => {
+            return accumulator + currValue.name + ",  ";
+          }, "");
+
+          if (result === "") {
+            result = "empty directory";
+          }
         } else {
           result = `ls: cannot access '${words}': No such file or directory`;
         }
@@ -104,7 +118,18 @@ const TerminalRow = ({
 
           const arr = currentDirectoryPath.split("/");
           arr.shift();
-          newDirectories[arr.slice(-1).toString()].push(rest);
+
+          if (arr.length === 0) {
+            newDirectories["root"].push({
+              name: rest,
+              isDirectory: true,
+            });
+          } else {
+            newDirectories[arr.slice(-1).toString()].push({
+              name: rest,
+              isDirectory: true,
+            });
+          }
           setChildDirectories(newDirectories);
           break;
         } else {
@@ -167,7 +192,7 @@ const TerminalRow = ({
   }
 
   const check = (e) => {
-    console.log(previousTerminalRows.length, arrowIndex);
+    // console.log(previousTerminalRows.length, arrowIndex);
     if (e.key === "Enter") {
       if (command.length !== 0) {
         handleCommands();
