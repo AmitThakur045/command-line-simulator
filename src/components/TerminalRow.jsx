@@ -33,7 +33,7 @@ const TerminalRow = ({
     let result = "";
     let rest = words.join(" ");
     rest = rest.trim();
-    console.log("res", rest, main);
+    // console.log("res", rest, main);
 
     switch (main) {
       case "cd": {
@@ -188,7 +188,6 @@ const TerminalRow = ({
               arr.shift(); // removing amit;
 
               arr.unshift("root"); // adding root to the front
-              console.log(arr);
               // checking if the destination directory is present or not
               const check = (idx) => {
                 if (idx === arr.length - 1) {
@@ -289,7 +288,6 @@ const TerminalRow = ({
             }
           } else {
             // moving multiple file to destination
-            console.log(words[words.length - 1].includes("/"));
             if (words[words.length - 1].includes("/")) {
               let arr = words[words.length - 1].split("/");
               arr.shift(); // removing " ";
@@ -297,7 +295,6 @@ const TerminalRow = ({
               arr.shift(); // removing amit;
 
               arr.unshift("root"); // adding root to the front
-              // console.log(arr);
               // checking if the destination directory is present or not
               const check = (idx) => {
                 if (idx === arr.length - 1) {
@@ -321,15 +318,14 @@ const TerminalRow = ({
               if (check(0)) {
                 let newDirectories = childDirectories;
                 words.pop();
-                console.log("words", words);
 
                 // added the new file in the directory
+                let directoryName = arr.splice(-1).toString();
                 words.forEach((obj) => {
-                  newDirectories[arr.splice(-1)].push({
+                  newDirectories[directoryName].push({
                     name: obj,
                     isDirectory: false,
                   });
-                  console.log(obj);
                 });
 
                 // remove the file from the prev directory
@@ -380,7 +376,6 @@ const TerminalRow = ({
           "' not found, or not yet implemented.Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
       }
     }
-    // console.log(result);
     document.getElementById(`row-result-${id}`).innerHTML = result;
 
     let newPrevTerminal = [];
@@ -402,7 +397,6 @@ const TerminalRow = ({
   }
 
   const check = (e) => {
-    // console.log(previousTerminalRows.length, arrowIndex);
     if (e.key === "Enter") {
       if (command.length !== 0) {
         handleCommands();
@@ -427,7 +421,7 @@ const TerminalRow = ({
   };
   // console.log("curr", currentDirectoryName, currentDirectoryPath);
   // console.log(previousTerminalRows);
-  console.log(childDirectories);
+  // console.log(childDirectories);
   // console.log("herllo", previousTerminalRows.length);
   return (
     <React.Fragment>
