@@ -59,7 +59,9 @@ function App() {
   const [terminalIndex, setTerminalIndex] = useState(0);
 
   return (
-    <div className="bg-black w-full h-full">
+    <div
+      className="bg-black w-full h-full"
+    >
       <TerminalRow
         currentDirectoryName={currentDirectoryName}
         setCurrentDirectoryName={setCurrentDirectoryName}

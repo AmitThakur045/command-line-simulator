@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const TerminalRow = ({
   id,
@@ -17,8 +17,6 @@ const TerminalRow = ({
 }) => {
   const [command, setCommand] = useState("");
   const [arrowIndex, setArrowIndex] = useState(0);
-  const firstRef = useRef(null);
-  const secondRef = useRef(null);
 
   useEffect(() => {
     document.getElementById(`row-result-${id}`).scrollIntoView(false);
@@ -376,7 +374,7 @@ const TerminalRow = ({
           "' not found, or not yet implemented.Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
       }
     }
-    document.getElementById(`row-result-${id}`).innerHTML = result;
+    // document.getElementById(`row-result-${id}`).innerHTML = result;
 
     let newPrevTerminal = [];
     // command, result, name, path
@@ -431,9 +429,13 @@ const TerminalRow = ({
             <div key={idx} id="terminal-body">
               <div className="flex w-full h-5 space-x-2">
                 <div className="flex font-semibold items-center">
-                  <span className="text-[#00e200]">Amit@Thakur</span>
-                  <span className="text-white">:</span>
-                  <span className="text-[#3464a3]">{data[3]}</span>
+                  <span className="text-[#00e200] font-extrabold">
+                    Amit@Thakur
+                  </span>
+                  <span className="text-white font-extrabold">:</span>
+                  <span className="text-[#3b90ff] font-extralight">
+                    {data[3]}
+                  </span>
                   <span className="text-white">$</span>
                 </div>
                 <div className="flex p-0 w-full">
@@ -441,22 +443,26 @@ const TerminalRow = ({
                     type="text"
                     value={data[0]}
                     disabled={true}
-                    className="bg-black w-full border-0 text-white outline-none caret-white text-left"
+                    className="bg-black w-[80vw] border-0 text-white outline-none caret-white text-left"
                   />
                 </div>
               </div>
-              <div className={"my-2 font-normal text-[#3464a3]"}>{data[1]}</div>
+              <div className={"my-2 font-extralight text-[#3b90ff]"}>
+                {data[1]}
+              </div>
             </div>
           ))}
         </React.Fragment>
       )}
 
       {/* for writing the command */}
-      <div className="flex w-full h-5 space-x-2" ref={firstRef}>
+      <div className="flex w-full h-5 space-x-2">
         <div className="flex font-semibold items-center">
-          <span className="text-[#00e200]">Amit@Thakur</span>
-          <span className="text-white">:</span>
-          <span className="text-[#3464a3]">{currentDirectoryPath}</span>
+          <span className="text-[#00e200] font-extrabold">Amit@Thakur</span>
+          <span className="text-white font-extrabold">:</span>
+          <span className="text-[#3b90ff] font-extralight">
+            {currentDirectoryPath}
+          </span>
           <span className="text-white">$</span>
         </div>
         <div className="flex p-0">
@@ -472,17 +478,13 @@ const TerminalRow = ({
             onKeyDown={(e) => check(e)}
             value={command}
             id={`row-input-${id}`}
-            className="bg-black w-full border-0 text-white outline-none caret-white text-left"
+            className="bg-black w-[80vw] border-0 text-white outline-none caret-white text-left"
           />
         </div>
       </div>
 
       {/* to display the result after executing the command */}
-      <div
-        ref={secondRef}
-        id={`row-result-${id}`}
-        className={"my-2 font-normal"}
-      ></div>
+      <div id={`row-result-${id}`} className={"my-2 font-extralight"}></div>
     </React.Fragment>
   );
 };
