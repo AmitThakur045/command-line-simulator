@@ -364,14 +364,14 @@ const TerminalRow = ({
       }
       case "help": {
         result =
-          "Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
+          "Available Commands: [ cd, ls, pwd, echo, clear, mkdir, touch, mv, about-amit]";
         break;
       }
       default: {
         result =
           "Command '" +
           main +
-          "' not found, or not yet implemented.Available Commands: [ cd, ls, pwd, echo, clear, mkdir, about-amit]";
+          "' not found, or not yet implemented.Available Commands: [ cd, ls, pwd, echo, clear, mkdir, touch, mv, about-amit]";
       }
     }
     // document.getElementById(`row-result-${id}`).innerHTML = result;
